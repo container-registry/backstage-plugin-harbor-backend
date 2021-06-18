@@ -1,10 +1,10 @@
 {
   "name": "@internal/backstage-plugin-harbor-backend",
-  "version": "0.1.0",
+  "version": "${CIRCLE_TAG}",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "license": "Apache-2.0",
-  "private": true,
+  "repository": "git://github.com/BESTSELLER/backstage-plugin-harbor-backend.git",
   "publishConfig": {
     "access": "public",
     "main": "dist/index.cjs.js",
