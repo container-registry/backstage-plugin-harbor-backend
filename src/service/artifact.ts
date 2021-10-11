@@ -10,10 +10,9 @@ export async function getArtifacts(
   project: string,
   repository: string
 ) {
-
-  let repo = repository
+  let repo = repository;
   if (repository.includes("/")) {
-    repo = repository.replace("/", "%252F")
+    repo = repository.replace("/", "%252F");
   }
 
   const url = `${baseUrl}/api/v2.0/projects/${project}/repositories/${repo}/artifacts?page=1&page_size=10&with_tag=true&with_label=false&with_scan_overview=false&with_signature=false&with_immutable_status=false`;
