@@ -49,7 +49,7 @@ export async function createRouter(
       username,
       password,
       project,
-      repository
+      decodeURIComponent(repository)
     );
 
     logger.info("PONG!");

@@ -10,7 +10,13 @@ export async function getArtifacts(
   project: string,
   repository: string
 ) {
-  const url = `${baseUrl}/api/v2.0/projects/${project}/repositories/${repository}/artifacts?page=1&page_size=10&with_tag=true&with_label=false&with_scan_overview=false&with_signature=false&with_immutable_status=false`;
+
+  let repo = repository
+  if (repository.includes("/")) {
+    repo = repository.replace("/", "%252F")
+  }
+
+  const url = `${baseUrl}/api/v2.0/projects/${project}/repositories/${repo}/artifacts?page=1&page_size=10&with_tag=true&with_label=false&with_scan_overview=false&with_signature=false&with_immutable_status=false`;
 
   const response = await fetch(url, {
     headers: {
