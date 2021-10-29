@@ -1,0 +1,12 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: backstage-plugin-harbor-backend
+  annotations: 
+    github.com/project-slug: BESTSELLER/backstage-plugin-harbor-backend
+    circleci.com/project-slug: github/BESTSELLER/backstage-plugin-harbor-backend
+    sonarqube.org/project-key: BESTSELLER_backstage-plugin-harbor-backend
+spec:
+  type: library
+  lifecycle: production
+  owner: engineering-services
