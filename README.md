@@ -1,9 +1,9 @@
-# Backstage GKE Usage plugin 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=BESTSELLER_backstage-plugin-harbor&metric=alert_status)](https://sonarcloud.io/dashboard?id=BESTSELLER_backstage-plugin-harbor)
-![npm](https://img.shields.io/npm/dt/@bestsellerit/backstage-plugin-harbor)
+# Backstage Harbor Backend plugin 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=BESTSELLER_backstage-plugin-harbor-backend&metric=alert_status)](https://sonarcloud.io/dashboard?id=BESTSELLER_backstage-plugin-harbor-backend)
+![npm](https://img.shields.io/npm/dt/@bestsellerit/backstage-plugin-harbor-backend)
 
 Welcome to the harbor backend plugin!
-This plugin will show you the will show information about your docker images within harbor
+This plugin will show information about your docker images within harbor
 
 ![Dashboard](docs/img/dashboard.png)
 ![Docker Image](docs/img/widget.png)
@@ -112,4 +112,4 @@ metadata:
 ```
 
 ## Contributing
-Everyone is welcome to contribute to this repository. Feel free to rase [issues](https://github.com/BESTSELLER/backstage-plugin-harbor/issues) or to submit [Pull Requests.](https://github.com/BESTSELLER/backstage-plugin-harbor/pulls)
+Everyone is welcome to contribute to this repository. Feel free to raise [issues](https://github.com/BESTSELLER/backstage-plugin-harbor-backend/issues) or to submit [Pull Requests.](https://github.com/BESTSELLER/backstage-plugin-harbor-backend/pulls)
