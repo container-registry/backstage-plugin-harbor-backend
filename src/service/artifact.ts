@@ -60,7 +60,10 @@ export async function getArtifacts(
           pullTime: dateFormat(element.pull_time, "yyyy-mm-dd HH:MM"),
           pushTime: dateFormat(element.push_time, "yyyy-mm-dd HH:MM"),
           projectID: projectId,
-          repoUrl: `${baseUrl}/harbor/projects/${projectId}/repositories/${repository.replace(/\//g, "%2F")}`,
+          repoUrl: `${baseUrl}/harbor/projects/${projectId}/repositories/${repository.replace(
+            /\//g,
+            "%2F"
+          )}`,
           vulnerabilities: {
             count: Object.keys(vulns[vulnKey].vulnerabilities).length,
             severity: severity,
