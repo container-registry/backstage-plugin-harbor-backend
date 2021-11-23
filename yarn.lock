@@ -1128,12 +1128,13 @@
     yaml "^1.9.2"
     yup "^0.29.3"
 
-"@backstage/config@^0.1.2", "@backstage/config@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@backstage/config/-/config-0.1.5.tgz#a883c1b5bdab7ab2ff041cd278f3e8c885203cb3"
-  integrity sha512-/pudFgexXqFLe1NdLDVeosBfJwS6+VsuNAduXW+g4901BxwptojqJxJcpi42nC2F9z74jDtYJlqlYIsJAEB8nA==
+"@backstage/config@^0.1.11", "@backstage/config@^0.1.2", "@backstage/config@^0.1.5":
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/@backstage/config/-/config-0.1.11.tgz#efaace61f02f11e6d0342efc9ef6d72da818ba80"
+  integrity sha512-8Zle4YcIr+vwVTS5pk9+SKOre3OQKTWPufpO9OZ86riFVuB9mKN4lCX9zyarlt2FOd50R25Oc/M7fWcwOQzSPA==
   dependencies:
-    lodash "^4.17.15"
+    "@backstage/types" "^0.1.1"
+    lodash "^4.17.21"
 
 "@backstage/errors@^0.1.1":
   version "0.1.1"
@@ -1155,6 +1156,11 @@
     cross-fetch "^3.0.6"
     git-url-parse "^11.4.4"
     luxon "^1.25.0"
+
+"@backstage/types@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@backstage/types/-/types-0.1.1.tgz#9d3091daef5cba7329d7ee98b82ea27430234201"
+  integrity sha512-ju+T86ogNPnwjjXjSaa4FIb6H/+J0DLWvxfdmqYOrLuuuJvZ5v3wwg7c2SHWfQhokjj8fqA1oERliCIiqcNHIg==
 
 "@bcoe/v8-coverage@^0.2.3":
   version "0.2.3"
