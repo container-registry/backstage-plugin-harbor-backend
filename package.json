@@ -33,7 +33,7 @@
     "js-base64": "^3.6.1",
     "node-fetch": "^2.6.1",
     "winston": "^3.2.1",
-    "yn": "^4.0.0"
+    "yn": "^5.0.0"
   },
   "devDependencies": {
     "@backstage/cli": "^0.10.1",
