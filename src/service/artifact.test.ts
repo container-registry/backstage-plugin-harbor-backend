@@ -19,6 +19,7 @@ describe("createRouter", () => {
       }),
     });
     app = express().use(router);
+
   });
 
   describe("GET /health", () => {
@@ -32,9 +33,13 @@ describe("createRouter", () => {
 
   describe("GET /artifacts", () => {
     it("return repository info", async () => {
+
+      const projectID = process.env.HARBOR_project
+      const repositoryID = process.env.HARBOR_repository
+
       const response = await request(app)
         .get("/artifacts")
-        .query({ project: "es", repository: "pipectl" });
+        .query({ project: projectID, repository: repositoryID });
 
       expect(response.statusCode).toEqual(200);
       expect(Array.isArray(response.body)).toBeTruthy();
