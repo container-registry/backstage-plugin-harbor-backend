@@ -14,44 +14,46 @@
  * limitations under the License.
  */
 
-import {
-  errorHandler,
-  notFoundHandler,
-  requestLoggingHandler,
-} from "@backstage/backend-common";
-import compression from "compression";
-import cors from "cors";
-import express from "express";
-import helmet from "helmet";
+import { createServiceBuilder } from "@backstage/backend-common";
+import { ConfigReader } from "@backstage/config";
+import { Server } from "http";
 import { Logger } from "winston";
 import { createRouter } from "./router";
-import { ConfigReader } from "@backstage/config";
 
 export interface ServerOptions {
   port: number;
   enableCors: boolean;
   logger: Logger;
 }
-
 export async function startStandaloneServer(
   options: ServerOptions
-): Promise<express.Application> {
-  const { enableCors, logger } = options;
-  const config = new ConfigReader({});
-  const app = express();
+): Promise<Server> {
+  const logger = options.logger.child({
+    service: "harbor-backend",
+  });
+  logger.debug("Starting application server...");
+  const router = await createRouter({
+    logger,
+    config: new ConfigReader({
+      harbor: {
+        baseUrl: process.env.APP_CONFIG_harbor_baseUrl,
+        username: process.env.APP_CONFIG_harbor_username,
+        password: process.env.APP_CONFIG_harbor_password,
+      },
+    }),
+  });
 
-  app.use(helmet());
-  if (enableCors) {
-    app.use(cors());
+  let service = createServiceBuilder(module)
+    .setPort(options.port)
+    .addRouter("/", router);
+  if (options.enableCors) {
+    service = service.enableCors({ origin: "http://localhost:7000" });
   }
-  app.use(compression());
-  app.use(express.json());
-  app.use(requestLoggingHandler());
-  app.use("/", await createRouter({ logger, config }));
-  app.use(notFoundHandler());
-  app.use(errorHandler());
 
-  return app;
+  return await service.start().catch((err) => {
+    logger.error(err);
+    process.exit(1);
+  });
 }
 
 module.hot?.accept();
