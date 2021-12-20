@@ -38,6 +38,7 @@
   "devDependencies": {
     "@backstage/cli": "^0.10.1",
     "@types/compression": "^1.7.0",
+    "@types/jest": "^27.0.3",
     "@types/supertest": "^2.0.8",
     "msw": "^0.21.2",
     "prettier": "^2.4.1",
