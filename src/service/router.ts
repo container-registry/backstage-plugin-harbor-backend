@@ -20,7 +20,7 @@ import express from "express";
 import Router from "express-promise-router";
 import { Logger } from "winston";
 import { getArtifacts } from "./artifact";
-// import { getArtifacts } from './artifact';
+import { repoSearch } from "./search";
 
 export interface RouterOptions {
   logger: Logger;
@@ -52,8 +52,14 @@ export async function createRouter(
       decodeURIComponent(repository)
     );
 
-    logger.info("PONG!");
     response.send(artifacts);
+  });
+
+  router.get("/search", async (request, response) => {
+    const repository: any = request.query.repository;
+    const search = await repoSearch(baseUrl, username, password, repository);
+
+    response.send(search);
   });
 
   router.get("/health", (_, response) => {
