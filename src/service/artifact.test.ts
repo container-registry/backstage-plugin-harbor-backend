@@ -1,10 +1,10 @@
-import request from 'supertest';
-import { createRouter } from './router';
-import express from 'express';
-import { ConfigReader } from '@backstage/config';
-import { getVoidLogger } from '@backstage/backend-common';
+import request from "supertest";
+import { createRouter } from "./router";
+import express from "express";
+import { ConfigReader } from "@backstage/config";
+import { getVoidLogger } from "@backstage/backend-common";
 
-describe('createRouter', () => {
+describe("createRouter", () => {
   let app: express.Express;
 
   beforeAll(async () => {
@@ -21,34 +21,34 @@ describe('createRouter', () => {
     app = express().use(router);
   });
 
-  describe('GET /health', () => {
-    it('returns ok', async () => {
-      const response = await request(app).get('/health');
+  describe("GET /health", () => {
+    it("returns ok", async () => {
+      const response = await request(app).get("/health");
 
       expect(response.statusCode).toEqual(200);
-      expect(response.body).toEqual({ status: 'ok' });
+      expect(response.body).toEqual({ status: "ok" });
     });
   });
 
-  describe('GET /artifacts', () => {
-    it('return repository info', async () => {
+  describe("GET /artifacts", () => {
+    it("return repository info", async () => {
       const projectID = process.env.HARBOR_project;
       const repositoryID = process.env.HARBOR_repository;
 
       const response = await request(app)
-        .get('/artifacts')
+        .get("/artifacts")
         .query({ project: projectID, repository: repositoryID });
 
       expect(response.statusCode).toEqual(200);
       expect(Array.isArray(response.body)).toBeTruthy();
 
-      expect(response.body[0]).toHaveProperty('size');
-      expect(response.body[0]).toHaveProperty('tag');
-      expect(response.body[0]).toHaveProperty('pullTime');
-      expect(response.body[0]).toHaveProperty('pushTime');
-      expect(response.body[0]).toHaveProperty('projectID');
-      expect(response.body[0]).toHaveProperty('repoUrl');
-      expect(response.body[0]).toHaveProperty('vulnerabilities');
+      expect(response.body[0]).toHaveProperty("size");
+      expect(response.body[0]).toHaveProperty("tag");
+      expect(response.body[0]).toHaveProperty("pullTime");
+      expect(response.body[0]).toHaveProperty("pushTime");
+      expect(response.body[0]).toHaveProperty("projectID");
+      expect(response.body[0]).toHaveProperty("repoUrl");
+      expect(response.body[0]).toHaveProperty("vulnerabilities");
     });
   });
 });
