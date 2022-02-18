@@ -1,6 +1,6 @@
 {
-  "name": "@bestsellerit/backstage-plugin-harbor-backend",
-  "version": "${CIRCLE_TAG}",
+  "name": "@internal/backstage-plugin-harbor-backend",
+  "version": "0.1.1",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "license": "Apache-2.0",
