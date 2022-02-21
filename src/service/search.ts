@@ -1,13 +1,36 @@
 import { Base64 } from 'js-base64';
 import fetch from 'node-fetch';
+import * as redis from 'redis';
 
 export async function repoSearch(
   baseUrl: string,
   username: string,
   password: string,
   body: string,
+  team: string,
 ) {
   const repos: Repositories[] = JSON.parse(JSON.stringify(body));
+
+  const client = redis.createClient();
+  await client.connect();
+
+  const HarborRepos = await client.json.get(team, { path: '.' });
+  if (HarborRepos) {
+    return HarborRepos;
+  } else {
+    const HarborRepos = await findRepos(baseUrl, username, password, repos);
+    await client.json.set(team, '.', JSON.parse(JSON.stringify(HarborRepos)));
+    return HarborRepos;
+  }
+  // return HarborRepos;
+}
+
+async function findRepos(
+  baseUrl: string,
+  username: string,
+  password: string,
+  repos: Repositories[],
+) {
   const repoNames: RepoInformation[] = [];
 
   await Promise.all(
@@ -24,13 +47,7 @@ export async function repoSearch(
 
       if (json.hasOwnProperty('error')) {
         console.log(json.error.message, v.repository);
-        // const error: RepoInformation[] = [
-        //   {
-        //     errorMsg: json.error.message,
-        //     project: '',
-        //     repository: v.repository,
-        //   },
-        // ];
+
         return;
       }
 
@@ -42,7 +59,6 @@ export async function repoSearch(
               const repoDetails: RepoInformation = {
                 project: v2.project_name,
                 repository: v2.repository_name.split('/', 2)[1],
-                // errorMsg: '',
               };
 
               repoNames.push(repoDetails);
@@ -67,5 +83,4 @@ interface Repositories {
 interface RepoInformation {
   project: string;
   repository: string;
-  // errorMsg: string;
 }

@@ -21,6 +21,7 @@ import Router from 'express-promise-router';
 import { Logger } from 'winston';
 import { getArtifacts } from './artifact';
 import { repoSearch } from './search';
+import { getTeamArtifacts } from './teamArtifacts';
 
 export interface RouterOptions {
   logger: Logger;
@@ -55,9 +56,23 @@ export async function createRouter(
     response.send(artifacts);
   });
 
+  router.post('/teamartifacts', async (request, response) => {
+    const team: any = request.query.team;
+
+    const artifacts = await getTeamArtifacts(request.body, team);
+
+    response.send(artifacts);
+  });
+
   router.post('/search', async (request, response) => {
-    // const repository: any = request.query.repository;
-    const search = await repoSearch(baseUrl, username, password, request.body);
+    const team: any = request.query.team;
+    const search = await repoSearch(
+      baseUrl,
+      username,
+      password,
+      request.body,
+      team,
+    );
 
     response.send(search);
   });
