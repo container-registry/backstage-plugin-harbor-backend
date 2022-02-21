@@ -42,7 +42,7 @@
     "@types/jest": "^27.0.3",
     "@types/node-fetch": "^2.6.1",
     "@types/supertest": "^2.0.8",
-    "msw": "^0.21.2",
+    "msw": "^0.38.1",
     "prettier": "^2.4.1",
     "supertest": "^6.1.6"
   },
