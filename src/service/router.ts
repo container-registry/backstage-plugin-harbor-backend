@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { errorHandler } from "@backstage/backend-common";
-import { Config } from "@backstage/config";
-import express from "express";
-import Router from "express-promise-router";
-import { Logger } from "winston";
-import { getArtifacts } from "./artifact";
-import { repoSearch } from "./search";
-import { getTeamArtifacts } from "./teamArtifacts";
+import { errorHandler } from '@backstage/backend-common';
+import { Config } from '@backstage/config';
+import express from 'express';
+import Router from 'express-promise-router';
+import { Logger } from 'winston';
+import { getArtifacts } from './artifact';
+import { repoSearch } from './search';
+import { getTeamArtifacts } from './teamArtifacts';
 
 export interface RouterOptions {
   logger: Logger;
@@ -29,20 +29,20 @@ export interface RouterOptions {
 }
 
 export async function createRouter(
-  options: RouterOptions
+  options: RouterOptions,
 ): Promise<express.Router> {
   const { logger } = options;
 
-  logger.info("Initializing harbor backend");
-  const baseUrl = options.config.getString("harbor.baseUrl");
-  const username = options.config.getString("harbor.username");
-  const password = options.config.getString("harbor.password");
-  const redisConfig = options.config.getOptionalConfig("redis");
+  logger.info('Initializing harbor backend');
+  const baseUrl = options.config.getString('harbor.baseUrl');
+  const username = options.config.getString('harbor.username');
+  const password = options.config.getString('harbor.password');
+  const redisConfig = options.config.getOptionalConfig('redis');
 
   const router = Router();
   router.use(express.json());
 
-  router.get("/artifacts", async (request, response) => {
+  router.get('/artifacts', async (request, response) => {
     const project: any = request.query.project;
     const repository: any = request.query.repository;
 
@@ -51,21 +51,20 @@ export async function createRouter(
       username,
       password,
       project,
-      decodeURIComponent(repository)
+      decodeURIComponent(repository),
     );
 
     response.send(artifacts);
   });
 
-  router.post("/teamartifacts", async (request, response) => {
+  router.post('/teamartifacts', async (request, response) => {
     const team: any = request.query.team;
-
     const artifacts = await getTeamArtifacts(request.body, team, redisConfig);
 
     response.send(artifacts);
   });
 
-  router.post("/search", async (request, response) => {
+  router.post('/search', async (request, response) => {
     const team: any = request.query.team;
     const search = await repoSearch(
       baseUrl,
@@ -73,15 +72,15 @@ export async function createRouter(
       password,
       request.body,
       team,
-      redisConfig
+      redisConfig,
     );
 
     response.send(search);
   });
 
-  router.get("/health", (_, response) => {
-    logger.info("PONG!");
-    response.send({ status: "ok" });
+  router.get('/health', (_, response) => {
+    logger.info('PONG!');
+    response.send({ status: 'ok' });
   });
   router.use(errorHandler());
   return router;
