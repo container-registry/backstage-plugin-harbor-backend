@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { createServiceBuilder } from '@backstage/backend-common';
-import { ConfigReader } from '@backstage/config';
-import { Server } from 'http';
-import { Logger } from 'winston';
-import { createRouter } from './router';
+import { createServiceBuilder } from "@backstage/backend-common";
+import { ConfigReader } from "@backstage/config";
+import { Server } from "http";
+import { Logger } from "winston";
+import { createRouter } from "./router";
 
 export interface ServerOptions {
   port: number;
@@ -26,12 +26,12 @@ export interface ServerOptions {
   logger: Logger;
 }
 export async function startStandaloneServer(
-  options: ServerOptions,
+  options: ServerOptions
 ): Promise<Server> {
   const logger = options.logger.child({
-    service: 'harbor-backend',
+    service: "harbor-backend",
   });
-  logger.debug('Starting application server...');
+  logger.debug("Starting application server...");
   const router = await createRouter({
     logger,
     config: new ConfigReader({
@@ -45,12 +45,12 @@ export async function startStandaloneServer(
 
   let service = createServiceBuilder(module)
     .setPort(options.port)
-    .addRouter('/', router);
+    .addRouter("/", router);
   if (options.enableCors) {
-    service = service.enableCors({ origin: 'http://localhost:7000' });
+    service = service.enableCors({ origin: "http://localhost:7000" });
   }
 
-  return await service.start().catch(err => {
+  return await service.start().catch((err) => {
     logger.error(err);
     process.exit(1);
   });
