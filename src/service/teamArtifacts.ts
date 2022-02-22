@@ -28,17 +28,16 @@ export async function getTeamArtifacts(
       JSON.parse(JSON.stringify(Artifacts))
     );
     return HarborArtifacts;
-  } else {
-    const HarborArtifacts = await teamArtifacts(RepoInformation);
-    setRedisCache(
-      redisHost,
-      redisPort,
-      `${team}Artifacts`,
-      60,
-      JSON.parse(JSON.stringify(HarborArtifacts))
-    );
-    return HarborArtifacts;
   }
+  const Artifacts = await teamArtifacts(RepoInformation);
+  setRedisCache(
+    redisHost,
+    redisPort,
+    `${team}Artifacts`,
+    60,
+    JSON.parse(JSON.stringify(Artifacts))
+  );
+  return Artifacts;
 }
 
 async function setRedisCache(
@@ -60,7 +59,7 @@ async function teamArtifacts(RepoInformation: RepoInformation[]) {
   const repoArtifacts: Artifact[] = [];
   const errorMsgs: HarborErrors[] = [];
 
-  const promiseAll = RepoInformation.map(async function (value) {
+  const promiseAll = RepoInformation.map(async (value) => {
     const response = await fetch(
       `http://localhost:7000/api/harbor/artifacts?project=${value.project}&repository=${value.repository}`
     );

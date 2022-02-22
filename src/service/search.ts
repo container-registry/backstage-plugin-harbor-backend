@@ -23,12 +23,11 @@ export async function repoSearch(
   const HarborRepos = await client.json.get(team, { path: "." });
   if (HarborRepos) {
     return HarborRepos;
-  } else {
-    const HarborRepos = await findRepos(baseUrl, username, password, repos);
-    await client.json.set(team, ".", JSON.parse(JSON.stringify(HarborRepos)));
-    return HarborRepos;
   }
-  // return HarborRepos;
+  const Repos = await findRepos(baseUrl, username, password, repos);
+  await client.json.set(team, ".", JSON.parse(JSON.stringify(HarborRepos)));
+  client.expire(team, 3600);
+  return Repos;
 }
 
 async function findRepos(
