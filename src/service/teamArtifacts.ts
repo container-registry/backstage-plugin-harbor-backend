@@ -8,7 +8,6 @@ export async function getTeamArtifacts(
   redisConfig: Config | undefined,
 ) {
   const RepoInformation: RepoInformation[] = JSON.parse(JSON.stringify(body));
-  console.log(RepoInformation);
 
   let client = redis.createClient({});
   if (redisConfig !== undefined) {
@@ -29,7 +28,6 @@ export async function getTeamArtifacts(
     return HarborArtifacts;
   }
 
-  console.log(RepoInformation);
   const Artifacts = await teamArtifacts(RepoInformation);
 
   await client.json.set(
@@ -44,8 +42,6 @@ export async function getTeamArtifacts(
 async function teamArtifacts(RepoInformation: RepoInformation[]) {
   const repoArtifacts: Artifact[] = [];
   const errorMsgs: HarborErrors[] = [];
-
-  console.log(RepoInformation);
 
   const promiseAll = RepoInformation.map(async value => {
     const response = await fetch(

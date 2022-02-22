@@ -46,7 +46,7 @@ async function findRepos(
   await Promise.all(
     repos.map(async (v: { repository: string }) => {
       const url = `${baseUrl}/api/v2.0/search?q=${v.repository}`;
-      console.log('finding repo:', v.repository);
+
       const response = await fetch(url, {
         headers: {
           'Content-Type': 'application/json',
@@ -65,7 +65,6 @@ async function findRepos(
         if (json.repository.length >= 1) {
           json.repository.map(
             (v2: { project_name: string; repository_name: string }) => {
-              console.log('found repo', v2.repository_name);
               const repoDetails: RepoInformation = {
                 project: v2.project_name,
                 repository: v2.repository_name.split('/', 2)[1],
