@@ -1,15 +1,15 @@
-import fetch from 'node-fetch';
-import * as redis from 'redis';
+import fetch from "node-fetch";
+import * as redis from "redis";
 
 export async function getTeamArtifacts(
   RepoInformation: RepoInformation[],
-  team: string,
+  team: string
 ) {
   const client = redis.createClient();
   await client.connect();
 
   const HarborArtifacts = await client.json.get(`${team}Artifacts`, {
-    path: '.',
+    path: ".",
   });
   if (HarborArtifacts) {
     return HarborArtifacts;
@@ -17,8 +17,8 @@ export async function getTeamArtifacts(
     const HarborArtifacts = await teamArtifacts(RepoInformation);
     await client.json.set(
       `${team}Artifacts`,
-      '.',
-      JSON.parse(JSON.stringify(HarborArtifacts)),
+      ".",
+      JSON.parse(JSON.stringify(HarborArtifacts))
     );
     return HarborArtifacts;
   }
@@ -32,11 +32,11 @@ async function teamArtifacts(RepoInformation: RepoInformation[]) {
 
   const promiseAll = RepoInformation.map(async function (value) {
     const response = await fetch(
-      `http://localhost:7000/api/harbor/artifacts?project=${value.project}&repository=${value.repository}`,
+      `http://localhost:7000/api/harbor/artifacts?project=${value.project}&repository=${value.repository}`
     );
     const json = await response.json();
 
-    if (json.hasOwnProperty('error')) {
+    if (json.hasOwnProperty("error")) {
       const errorMsg: HarborErrors = {
         project: value.project,
         repository: value.repository,
@@ -48,7 +48,7 @@ async function teamArtifacts(RepoInformation: RepoInformation[]) {
     }
 
     json.sort((a: { pushTime: number }, b: { pushTime: number }) =>
-      a.pushTime > b.pushTime ? -1 : 1,
+      a.pushTime > b.pushTime ? -1 : 1
     );
     const repoArtifact: Artifact = json[0];
     repoArtifact.repository = value.repository;
