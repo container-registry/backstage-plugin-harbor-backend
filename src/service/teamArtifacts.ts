@@ -92,13 +92,7 @@ interface HarborErrors {
   errorMsg: string;
 }
 
-interface body {
-  team: string;
-  RepoInformation: RepoInformation[];
-}
-
 interface RepoInformation {
   project: string;
   repository: string;
-  // errorMsg: string;
 }

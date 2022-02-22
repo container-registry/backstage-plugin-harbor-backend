@@ -37,6 +37,7 @@ export async function createRouter(
   const baseUrl = options.config.getString('harbor.baseUrl');
   const username = options.config.getString('harbor.username');
   const password = options.config.getString('harbor.password');
+  const redisConfig = options.config.getOptionalConfig('redis');
 
   const router = Router();
   router.use(express.json());
@@ -72,6 +73,7 @@ export async function createRouter(
       password,
       request.body,
       team,
+      redisConfig,
     );
 
     response.send(search);

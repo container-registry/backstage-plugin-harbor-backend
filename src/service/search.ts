@@ -1,3 +1,4 @@
+import { Config } from '@backstage/config';
 import { Base64 } from 'js-base64';
 import fetch from 'node-fetch';
 import * as redis from 'redis';
@@ -8,10 +9,15 @@ export async function repoSearch(
   password: string,
   body: string,
   team: string,
+  redisConfig: Config,
 ) {
   const repos: Repositories[] = JSON.parse(JSON.stringify(body));
+  const redisHost = redisConfig.getString('host');
+  const redisPort = redisConfig.getNumber('port');
 
-  const client = redis.createClient();
+  const client = redis.createClient({
+    url: `redis://${redisHost}:${redisPort}`,
+  });
   await client.connect();
 
   const HarborRepos = await client.json.get(team, { path: '.' });
