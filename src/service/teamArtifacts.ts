@@ -1,29 +1,59 @@
 import fetch from "node-fetch";
 import * as redis from "redis";
+import { Config } from "@backstage/config";
 
 export async function getTeamArtifacts(
   RepoInformation: RepoInformation[],
-  team: string
+  team: string,
+  redisConfig: Config
 ) {
-  const client = redis.createClient();
+  const redisHost = redisConfig.getString("host");
+  const redisPort = redisConfig.getNumber("port");
+
+  const client = redis.createClient({
+    url: `redis://${redisHost}:${redisPort}`,
+  });
   await client.connect();
 
   const HarborArtifacts = await client.json.get(`${team}Artifacts`, {
     path: ".",
   });
   if (HarborArtifacts) {
+    const Artifacts = await teamArtifacts(RepoInformation);
+    setRedisCache(
+      redisHost,
+      redisPort,
+      `${team}Artifacts`,
+      60,
+      JSON.parse(JSON.stringify(Artifacts))
+    );
     return HarborArtifacts;
   } else {
     const HarborArtifacts = await teamArtifacts(RepoInformation);
-    await client.json.set(
+    setRedisCache(
+      redisHost,
+      redisPort,
       `${team}Artifacts`,
-      ".",
+      60,
       JSON.parse(JSON.stringify(HarborArtifacts))
     );
     return HarborArtifacts;
   }
+}
 
-  // return artifacts;
+async function setRedisCache(
+  redisHost: string,
+  redisPort: number,
+  identifier: string,
+  ttl: number = 3600,
+  jsonData: string
+) {
+  const client = redis.createClient({
+    url: `redis://${redisHost}:${redisPort}`,
+  });
+  await client.connect();
+  await client.json.set(identifier, ".", jsonData);
+  client.expire(identifier, ttl);
 }
 
 async function teamArtifacts(RepoInformation: RepoInformation[]) {
@@ -92,13 +122,7 @@ interface HarborErrors {
   errorMsg: string;
 }
 
-interface body {
-  team: string;
-  RepoInformation: RepoInformation[];
-}
-
 interface RepoInformation {
   project: string;
   repository: string;
-  // errorMsg: string;
 }
