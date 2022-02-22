@@ -9,15 +9,19 @@ export async function repoSearch(
   password: string,
   body: string,
   team: string,
-  redisConfig: Config
+  redisConfig: Config | undefined
 ) {
   const repos: Repositories[] = JSON.parse(JSON.stringify(body));
-  const redisHost = redisConfig.getString("host");
-  const redisPort = redisConfig.getNumber("port");
+  let client = redis.createClient({});
+  if (redisConfig !== undefined) {
+    const redisHost = redisConfig.getString("host");
+    const redisPort = redisConfig.getNumber("port");
 
-  const client = redis.createClient({
-    url: `redis://${redisHost}:${redisPort}`,
-  });
+    client = redis.createClient({
+      url: `redis://${redisHost}:${redisPort}`,
+    });
+  }
+
   await client.connect();
 
   const HarborRepos = await client.json.get(team, { path: "." });

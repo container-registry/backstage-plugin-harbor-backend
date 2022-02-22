@@ -5,54 +5,35 @@ import { Config } from "@backstage/config";
 export async function getTeamArtifacts(
   RepoInformation: RepoInformation[],
   team: string,
-  redisConfig: Config
+  redisConfig: Config | undefined
 ) {
-  const redisHost = redisConfig.getString("host");
-  const redisPort = redisConfig.getNumber("port");
+  let client = redis.createClient({});
+  if (redisConfig !== undefined) {
+    const redisHost = redisConfig.getString("host");
+    const redisPort = redisConfig.getNumber("port");
 
-  const client = redis.createClient({
-    url: `redis://${redisHost}:${redisPort}`,
-  });
+    client = redis.createClient({
+      url: `redis://${redisHost}:${redisPort}`,
+    });
+  }
+
   await client.connect();
 
   const HarborArtifacts = await client.json.get(`${team}Artifacts`, {
     path: ".",
   });
   if (HarborArtifacts) {
-    const Artifacts = await teamArtifacts(RepoInformation);
-    setRedisCache(
-      redisHost,
-      redisPort,
-      `${team}Artifacts`,
-      60,
-      JSON.parse(JSON.stringify(Artifacts))
-    );
     return HarborArtifacts;
   }
   const Artifacts = await teamArtifacts(RepoInformation);
-  setRedisCache(
-    redisHost,
-    redisPort,
+
+  await client.json.set(
     `${team}Artifacts`,
-    60,
+    ".",
     JSON.parse(JSON.stringify(Artifacts))
   );
+  client.expire(`${team}Artifacts`, 3600);
   return Artifacts;
-}
-
-async function setRedisCache(
-  redisHost: string,
-  redisPort: number,
-  identifier: string,
-  ttl: number = 3600,
-  jsonData: string
-) {
-  const client = redis.createClient({
-    url: `redis://${redisHost}:${redisPort}`,
-  });
-  await client.connect();
-  await client.json.set(identifier, ".", jsonData);
-  client.expire(identifier, ttl);
 }
 
 async function teamArtifacts(RepoInformation: RepoInformation[]) {
