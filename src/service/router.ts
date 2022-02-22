@@ -37,7 +37,7 @@ export async function createRouter(
   const baseUrl = options.config.getString('harbor.baseUrl');
   const username = options.config.getString('harbor.username');
   const password = options.config.getString('harbor.password');
-  const redisConfig = options.config.getOptionalConfig('redis');
+  const redisConfig = options.config.getConfig('redis');
 
   const router = Router();
   router.use(express.json());
@@ -60,7 +60,7 @@ export async function createRouter(
   router.post('/teamartifacts', async (request, response) => {
     const team: any = request.query.team;
 
-    const artifacts = await getTeamArtifacts(request.body, team);
+    const artifacts = await getTeamArtifacts(request.body, team, redisConfig);
 
     response.send(artifacts);
   });
