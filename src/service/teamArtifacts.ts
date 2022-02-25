@@ -24,7 +24,7 @@ export async function getTeamArtifacts(
   const HarborArtifacts = await client.get(`${team}Artifacts`);
   const ArtifactsLen: Artifact[] = JSON.parse(JSON.stringify(HarborArtifacts));
 
-  if (HarborArtifacts && ArtifactsLen.length >= 1) {
+  if (HarborArtifacts && ArtifactsLen.length >= 3) {
     return HarborArtifacts;
   }
 

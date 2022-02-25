@@ -29,7 +29,7 @@ export async function repoSearch(
     JSON.stringify(HarborRepos)
   );
 
-  if (HarborRepos && HarborReposArr.length >= 1) {
+  if (HarborRepos && HarborReposArr.length >= 3) {
     return HarborRepos;
   }
   const Repos = await findRepos(baseUrl, username, password, repos);
