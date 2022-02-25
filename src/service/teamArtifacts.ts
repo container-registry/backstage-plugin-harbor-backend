@@ -1,7 +1,6 @@
 import fetch from "node-fetch";
 import * as redis from "redis";
 import { Config } from "@backstage/config";
-import { json } from "express";
 
 export async function getTeamArtifacts(
   body: string,
