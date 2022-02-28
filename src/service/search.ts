@@ -26,7 +26,7 @@ export async function repoSearch(
 
   const HarborRepos = await client.get(team);
 
-  if (HarborRepos != null && JSON.parse(HarborRepos).length >= 1) {
+  if (HarborRepos !== null && JSON.parse(HarborRepos).length >= 1) {
     return HarborRepos;
   }
   const Repos = await findRepos(baseUrl, username, password, repos);
