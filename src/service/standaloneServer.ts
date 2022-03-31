@@ -15,7 +15,7 @@
  */
 
 import { createServiceBuilder } from "@backstage/backend-common";
-import { Config, ConfigReader } from "@backstage/config";
+import { ConfigReader } from "@backstage/config";
 import { Server } from "http";
 import { Logger } from "winston";
 import { createRouter } from "./router";
@@ -24,16 +24,13 @@ export interface ServerOptions {
   port: number;
   enableCors: boolean;
   logger: Logger;
-  config: Config;
 }
-
 export async function startStandaloneServer(
   options: ServerOptions
 ): Promise<Server> {
   const logger = options.logger.child({
     service: "harbor-backend",
   });
-
   logger.debug("Starting application server...");
   const router = await createRouter({
     logger,
@@ -50,7 +47,7 @@ export async function startStandaloneServer(
     .setPort(options.port)
     .addRouter("/", router);
   if (options.enableCors) {
-    service = service.enableCors({ origin: "http://localhost:3000" });
+    service = service.enableCors({ origin: "http://localhost:7000" });
   }
 
   return await service.start().catch((err) => {
