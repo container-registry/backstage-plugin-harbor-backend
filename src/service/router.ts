@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Spotify AB
+ * Copyright 2020 The Backstage Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,13 +31,13 @@ export interface RouterOptions {
 export async function createRouter(
   options: RouterOptions
 ): Promise<express.Router> {
-  const { logger } = options;
+  const { logger, config } = options;
 
   logger.info("Initializing harbor backend");
-  const baseUrl = options.config.getString("harbor.baseUrl");
-  const username = options.config.getString("harbor.username");
-  const password = options.config.getString("harbor.password");
-  const redisConfig = options.config.getOptionalConfig("redis");
+  const baseUrl = config.getString("harbor.baseUrl");
+  const username = config.getString("harbor.username");
+  const password = config.getString("harbor.password");
+  const redisConfig = config.getOptionalConfig("redis");
 
   const router = Router();
   router.use(express.json());
@@ -79,7 +79,6 @@ export async function createRouter(
   });
 
   router.get("/health", (_, response) => {
-    logger.info("PONG!");
     response.send({ status: "ok" });
   });
   router.use(errorHandler());
