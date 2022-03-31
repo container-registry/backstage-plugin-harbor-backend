@@ -21,15 +21,6 @@ describe("createRouter", () => {
     app = express().use(router);
   });
 
-  describe("GET /health", () => {
-    it("returns ok", async () => {
-      const response = await request(app).get("/health");
-
-      expect(response.statusCode).toEqual(200);
-      expect(response.body).toEqual({ status: "ok" });
-    });
-  });
-
   describe("GET /artifacts", () => {
     it("return repository info", async () => {
       const projectID = process.env.HARBOR_project;
