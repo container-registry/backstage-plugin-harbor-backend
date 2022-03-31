@@ -33,7 +33,7 @@ export async function startStandaloneServer(
   const logger = options.logger.child({
     service: "harbor-backend",
   });
-  const config = options.config;
+
   logger.debug("Starting application server...");
   const router = await createRouter({
     logger,
