@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import { getVoidLogger } from "@backstage/backend-common";
 import { ConfigReader } from "@backstage/config";
 import express from "express";
