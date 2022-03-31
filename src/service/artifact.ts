@@ -1,7 +1,6 @@
 import { Base64 } from "js-base64";
-
-const fetch = require("node-fetch");
-const dateFormat = require("dateformat");
+import moment from "moment";
+import fetch from "node-fetch";
 
 export async function getArtifacts(
   baseUrl: string,
@@ -24,9 +23,7 @@ export async function getArtifacts(
     },
   }).then((res: { json: () => any }) => res.json());
 
-  const artifacts: any = [];
-
-  await Promise.all(
+  return await Promise.all(
     response.map(
       async (element: {
         addition_links: { vulnerabilities: { href: string } };
@@ -82,11 +79,15 @@ export async function getArtifacts(
           }
         });
 
+        const generatedTag = element.tags?.length
+          ? element.tags[0].name
+          : "undefined";
+
         const art: Artifact = {
           size: Math.round((element.size / 1028 / 1028) * 100) / 100,
-          tag: element.tags[0].name,
-          pullTime: dateFormat(element.pull_time, "yyyy-mm-dd HH:MM"),
-          pushTime: dateFormat(element.push_time, "yyyy-mm-dd HH:MM"),
+          tag: generatedTag,
+          pullTime: moment(element.pull_time).format("DD-MM-YYYY HH:MM"),
+          pushTime: moment(element.push_time).format("DD-MM-YYYY HH:MM"),
           projectID: projectId,
           repoUrl: `${baseUrl}/harbor/projects/${projectId}/repositories/${repository.replace(
             /\//g,
@@ -101,23 +102,23 @@ export async function getArtifacts(
             low: low,
             none: none,
           },
+          id: projectId + generatedTag + element.push_time,
         };
-        artifacts.push(art);
+        return art;
       }
     )
   );
-
-  return artifacts;
 }
 
 interface Artifact {
   tag: string;
   size: number;
-  pullTime: number;
+  pullTime: string;
   pushTime: string;
   projectID: number;
   repoUrl: string;
   vulnerabilities: Vulnerabilities;
+  id: string;
 }
 
 interface Vulnerabilities {

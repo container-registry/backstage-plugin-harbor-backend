@@ -1,6 +1,9 @@
+import { getRootLogger } from "@backstage/backend-common";
+import { Config } from "@backstage/config";
 import fetch from "node-fetch";
 import * as redis from "redis";
-import { Config } from "@backstage/config";
+
+const logger = getRootLogger();
 
 export async function getTeamArtifacts(
   body: string,
@@ -43,6 +46,16 @@ async function teamArtifacts(RepoInformation: RepoInformation[]) {
       `http://localhost:7000/api/harbor/artifacts?project=${value.project}&repository=${value.repository}`
     );
     const json = await response.json();
+    if (json.length === 0) {
+      const errorMsg: HarborErrors = {
+        project: value.project,
+        repository: value.repository,
+        errorMsg: "Repository not found",
+      };
+      errorMsgs.push(errorMsg);
+      logger.warn(JSON.stringify(errorMsg));
+      return;
+    }
 
     if (json.hasOwnProperty("error")) {
       const errorMsg: HarborErrors = {
@@ -51,7 +64,7 @@ async function teamArtifacts(RepoInformation: RepoInformation[]) {
         errorMsg: json.error.message,
       };
       errorMsgs.push(errorMsg);
-      console.log(errorMsg);
+      logger.error(JSON.stringify(errorMsg));
       return;
     }
 
