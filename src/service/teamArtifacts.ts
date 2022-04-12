@@ -43,7 +43,7 @@ async function teamArtifacts(RepoInformation: RepoInformation[]) {
 
   const promiseAll = RepoInformation.map(async (value) => {
     const response = await fetch(
-      `http://localhost:7000/api/harbor/artifacts?project=${value.project}&repository=${value.repository}`
+      `http://localhost:7007/api/harbor/artifacts?project=${value.project}&repository=${value.repository}`
     );
     const json = await response.json();
     if (json.length === 0) {
