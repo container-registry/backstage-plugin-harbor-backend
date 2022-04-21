@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import { getVoidLogger } from '@backstage/backend-common';
-import { ConfigReader } from '@backstage/config';
-import express from 'express';
-import request from 'supertest';
-import { createRouter } from './router';
+import { getVoidLogger } from '@backstage/backend-common'
+import { ConfigReader } from '@backstage/config'
+import express from 'express'
+import request from 'supertest'
+import { createRouter } from './router'
 
 describe('createRouter', () => {
-  let app: express.Express;
+  let app: express.Express
 
   beforeAll(async () => {
     const router = await createRouter({
@@ -33,20 +33,20 @@ describe('createRouter', () => {
           password: process.env.APP_CONFIG_harbor_password,
         },
       }),
-    });
-    app = express().use(router);
-  });
+    })
+    app = express().use(router)
+  })
 
   beforeEach(() => {
-    jest.resetAllMocks();
-  });
+    jest.resetAllMocks()
+  })
 
   describe('GET /health', () => {
     it('returns ok', async () => {
-      const response = await request(app).get('/health');
+      const response = await request(app).get('/health')
 
-      expect(response.status).toEqual(200);
-      expect(response.body).toEqual({ status: 'ok' });
-    });
-  });
-});
+      expect(response.status).toEqual(200)
+      expect(response.body).toEqual({ status: 'ok' })
+    })
+  })
+})
