@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { getVoidLogger } from "@backstage/backend-common";
-import { ConfigReader } from "@backstage/config";
-import express from "express";
-import request from "supertest";
-import { createRouter } from "./router";
+import { getVoidLogger } from '@backstage/backend-common';
+import { ConfigReader } from '@backstage/config';
+import express from 'express';
+import request from 'supertest';
+import { createRouter } from './router';
 
-describe("createRouter", () => {
+describe('createRouter', () => {
   let app: express.Express;
 
   beforeAll(async () => {
@@ -41,12 +41,12 @@ describe("createRouter", () => {
     jest.resetAllMocks();
   });
 
-  describe("GET /health", () => {
-    it("returns ok", async () => {
-      const response = await request(app).get("/health");
+  describe('GET /health', () => {
+    it('returns ok', async () => {
+      const response = await request(app).get('/health');
 
       expect(response.status).toEqual(200);
-      expect(response.body).toEqual({ status: "ok" });
+      expect(response.body).toEqual({ status: 'ok' });
     });
   });
 });
