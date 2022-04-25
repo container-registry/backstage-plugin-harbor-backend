@@ -1653,10 +1653,10 @@
   resolved "https://registry.npmjs.org/@node-redis/json/-/json-1.0.2.tgz"
   integrity sha512-qVRgn8WfG46QQ08CghSbY4VhHFgaTY71WjpwRBGEuqGPfWwfRcIf3OqSpR7Q/45X+v3xd8mvYjywqh0wqJ8T+g==
 
-"@node-redis/search@1.0.4":
-  version "1.0.4"
-  resolved "https://registry.npmjs.org/@node-redis/search/-/search-1.0.4.tgz"
-  integrity sha512-IEP2BSAuoehlOX9IpAZjiB/U6ZBVjEf8YMrKfuBdx3bJaHbOeLq69CQQJ6DxBwpGzskktIMzMWei2GeRgl37mw==
+"@node-redis/search@1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@node-redis/search/-/search-1.0.5.tgz#96050007eb7c50a7e47080320b4f12aca8cf94c4"
+  integrity sha512-MCOL8iCKq4v+3HgEQv8zGlSkZyXSXtERgrAJ4TSryIG/eLFy84b57KmNNa/V7M1Q2Wd2hgn2nPCGNcQtk1R1OQ==
 
 "@node-redis/time-series@1.0.2":
   version "1.0.2"
@@ -9824,16 +9824,16 @@ redis-parser@3.0.0, redis-parser@^3.0.0:
   dependencies:
     redis-errors "^1.0.0"
 
-redis@^4.0.4:
-  version "4.0.5"
-  resolved "https://registry.npmjs.org/redis/-/redis-4.0.5.tgz"
-  integrity sha512-jXpAa0RWIX7tQZjYsq4lQHCwmNiUQO73RiX3yMaWubWr26jQ+4PP9yFkoYH+mNZ6/w8uKomvwMea6zyUFhZO3A==
+redis@^4.0.6:
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/redis/-/redis-4.0.6.tgz#a2ded4d9f4f4bad148e54781051618fc684cd858"
+  integrity sha512-IaPAxgF5dV0jx+A9l6yd6R9/PAChZIoAskDVRzUODeLDNhsMlq7OLLTmu0AwAr0xjrJ1bibW5xdpRwqIQ8Q0Xg==
   dependencies:
     "@node-redis/bloom" "1.0.1"
     "@node-redis/client" "1.0.5"
     "@node-redis/graph" "1.0.0"
     "@node-redis/json" "1.0.2"
-    "@node-redis/search" "1.0.4"
+    "@node-redis/search" "1.0.5"
     "@node-redis/time-series" "1.0.2"
 
 regenerate-unicode-properties@^10.0.1:
