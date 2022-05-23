@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@backstage/backend-common": "^0.13.0",
-    "@backstage/config": "^1.0.0",
+    "@backstage/config": "^1.0.1",
     "@types/express": "*",
     "express": "^4.18.1",
     "express-promise-router": "^4.1.0",
