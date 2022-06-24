@@ -44,9 +44,20 @@ export async function getArtifacts(
 
         const vulnKey =
           'application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0'
+
         if (vulns[vulnKey] === undefined) {
-          vulns[vulnKey] = { severity: 'Unknown', vulnerabilities: [] }
+          vulns[vulnKey] = {
+            generated_at: '',
+            scanner: {
+              name: 'undefined',
+              vendor: 'undefined',
+              version: 'undefined',
+            },
+            severity: 'Unknown',
+            vulnerabilities: [],
+          }
         }
+
         let severity = vulns[vulnKey].severity
         if (severity === 'Unknown') {
           severity = 'None'
