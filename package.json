@@ -13,6 +13,7 @@
   "backstage": {
     "role": "backend-plugin"
   },
+  "configSchema": "config.d.ts",
   "scripts": {
     "start": "backstage-cli package start",
     "build": "backstage-cli package build",
@@ -45,6 +46,7 @@
     "supertest": "^6.1.6"
   },
   "files": [
-    "dist"
+    "dist",
+    "config.d.ts"
   ]
 }
