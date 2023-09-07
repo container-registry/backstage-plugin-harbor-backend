@@ -118,6 +118,9 @@ metadata:
 
 Everyone is welcome to contribute to this repository. Feel free to raise [issues](https://github.com/container-registry/backstage-plugin-harbor-backend/issues) or to submit [Pull Requests.](https://github.com/container-registry/backstage-plugin-harbor-backend/pulls)
 
+To test the plugin locally set environment variables APP_CONFIG_harbor_baseUrl, APP_CONFIG_harbor_username and APP_CONFIG_harbor_password. Run "yarn start" and access the endpoint at http://localhost:7007/artifacts?project={your-project-name}&repository={your-repo-name}
+
+
 ## History
 
 This Backstage plugin was initially created by [BESTSELLER](https://github.com/BESTSELLER) and transferred to us.
