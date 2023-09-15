@@ -32,6 +32,7 @@ export async function getArtifacts(
         pull_time: string
         push_time: string
         project_id: number
+        digest: string
       }) => {
         const vulnUrl: string = `${baseUrl}${element.addition_links.vulnerabilities.href}`
 
@@ -43,7 +44,7 @@ export async function getArtifacts(
         }).then((res: { json: () => any }) => res.json())
 
         const vulnKey =
-          'application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0'
+          'application/vnd.security.vulnerability.report; version=1.1'
 
         if (vulns[vulnKey] === undefined) {
           vulns[vulnKey] = {
@@ -94,7 +95,7 @@ export async function getArtifacts(
         })
 
         const generatedTag = element.tags?.length
-          ? element.tags[0].name
+          ? element.tags.map(tag => tag.name).join(',')
           : 'undefined'
 
         const art: Artifact = {
@@ -117,6 +118,7 @@ export async function getArtifacts(
             none: none,
           },
           id: projectId + generatedTag + element.push_time,
+          artifactDigest: element.digest
         }
         return art
       }
@@ -133,6 +135,7 @@ interface Artifact {
   repoUrl: string
   vulnerabilities: Vulnerabilities
   id: string
+  artifactDigest: string
 }
 
 interface Vulnerabilities {
@@ -146,10 +149,10 @@ interface Vulnerabilities {
 }
 
 export interface Root {
-  'application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0': ApplicationVndScannerAdapterVulnReportHarborJsonVersion10
+  'application/vnd.security.vulnerability.report; version=1.1': ApplicationVndSecurityVulnerabilityReportVersion11
 }
 
-export interface ApplicationVndScannerAdapterVulnReportHarborJsonVersion10 {
+export interface ApplicationVndSecurityVulnerabilityReportVersion11 {
   generated_at: string
   scanner: Scanner
   severity: string
