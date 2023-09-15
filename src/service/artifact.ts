@@ -47,8 +47,8 @@ export async function getArtifacts(
           tag: generatedTag,
           pullTime: moment(element.pull_time).format('DD-MM-YYYY HH:MM'),
           pushTime: moment(element.push_time).format('DD-MM-YYYY HH:MM'),
-          projectID: projectId,
-          repoUrl: `${baseUrl}/harbor/projects/${projectId}/repositories/${repository.replace(
+          projectID: +project,
+          repoUrl: `${baseUrl}/harbor/projects/${project}/repositories/${repository.replace(
             /\//g,
             '%2F'
           )}`,
@@ -61,7 +61,7 @@ export async function getArtifacts(
             low: Low,
             none: scanOverview.summary.total - Critical - High - Medium - Low,
           },
-          id: projectId + generatedTag + element.push_time,
+          id: project + generatedTag + element.push_time,
         }
         return art
       }
