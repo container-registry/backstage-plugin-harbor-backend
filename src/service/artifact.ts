@@ -47,7 +47,7 @@ export async function getArtifacts(
           tag: generatedTag,
           pullTime: moment(element.pull_time).format('DD-MM-YYYY HH:MM'),
           pushTime: moment(element.push_time).format('DD-MM-YYYY HH:MM'),
-          projectID: +project,
+          projectID: project,
           repoUrl: `${baseUrl}/harbor/projects/${project}/repositories/${repository.replace(
             /\//g,
             '%2F'
@@ -74,7 +74,7 @@ interface Artifact {
   size: number
   pullTime: string
   pushTime: string
-  projectID: number
+  projectID: number | string
   repoUrl: string
   vulnerabilities: Vulnerabilities
   id: string
