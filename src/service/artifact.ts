@@ -34,6 +34,7 @@ export async function getArtifacts(
         project_id: number
       }) => {
 
+        const projectId = element.project_id
         
         const generatedTag = element.tags?.length
         ? element.tags[0].name
@@ -47,8 +48,8 @@ export async function getArtifacts(
           tag: generatedTag,
           pullTime: moment(element.pull_time).format('DD-MM-YYYY HH:MM'),
           pushTime: moment(element.push_time).format('DD-MM-YYYY HH:MM'),
-          projectID: project,
-          repoUrl: `${baseUrl}/harbor/projects/${project}/repositories/${repository.replace(
+          projectID: projectId,
+          repoUrl: `${baseUrl}/harbor/projects/${projectId}/repositories/${repository.replace(
             /\//g,
             '%2F'
           )}`,
@@ -61,7 +62,7 @@ export async function getArtifacts(
             low: Low,
             none: scanOverview.summary.total - Critical - High - Medium - Low,
           },
-          id: project + generatedTag + element.push_time,
+          id: projectId + generatedTag + element.push_time,
         }
         return art
       }
@@ -74,7 +75,7 @@ interface Artifact {
   size: number
   pullTime: string
   pushTime: string
-  projectID: number | string
+  projectID: number
   repoUrl: string
   vulnerabilities: Vulnerabilities
   id: string
