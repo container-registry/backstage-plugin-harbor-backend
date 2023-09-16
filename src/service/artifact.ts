@@ -51,6 +51,63 @@ export async function getArtifacts(
           ? element.tags[0].name
           : 'undefined'
 
+        if (element.addition_links.vulnerabilities !== undefined) {
+
+          const vulnUrl: string = `${baseUrl}${element.addition_links.vulnerabilities.href}`
+
+          const vulns: Root = await fetch(vulnUrl, {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Basic ${Base64.encode(`${username}:${password}`)}`,
+            },
+          }).then((res: { json: () => any }) => res.json())
+
+          const vulnKey =
+            'application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0'
+
+          if (vulns[vulnKey] === undefined) {
+            vulns[vulnKey] = {
+              generated_at: '',
+              scanner: {
+                name: 'undefined',
+                vendor: 'undefined',
+                version: 'undefined',
+              },
+              severity: 'Unknown',
+              vulnerabilities: [],
+            }
+          }
+
+          severity = vulns[vulnKey].severity
+          if (severity === 'Unknown') {
+            severity = 'None'
+          }
+
+          vulns[vulnKey].vulnerabilities.map((value) => {
+            switch (value.severity) {
+              case 'Low': {
+                low += 1
+                break
+              }
+              case 'Medium': {
+                medium += 1
+                break
+              }
+              case 'High': {
+                high += 1
+                break
+              }
+              case 'Critical': {
+                critical += 1
+                break
+              }
+              default:
+                none += 1
+            }
+          })
+
+          vulnerabilityCount = Object.keys(vulns[vulnKey].vulnerabilities).length;
+        }
         const art: Artifact = {
           size: Math.round((element.size / 1028 / 1028) * 100) / 100,
           tag: generatedTag,
