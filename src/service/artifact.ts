@@ -32,16 +32,24 @@ export async function getArtifacts(
         pull_time: string
         push_time: string
         project_id: number
+        scan_overview: {
+          [mime: string]: {
+            severity: string,
+            summary: {
+              total: number,
+              summary: {
+                [vulnSeverity: string]: number
+              }
+            }
+          }
+        }
       }) => {
 
         const projectId = element.project_id
-        
+
         const generatedTag = element.tags?.length
-        ? element.tags[0].name
-        : 'undefined'
-        
-        const scanOverview = element.scan_overview["application/vnd.security.vulnerability.report; version=1.1"]
-        const { Critical, High, Medium, Low } = scanOverview.summary.summary
+          ? element.tags[0].name
+          : 'undefined'
 
         const art: Artifact = {
           size: Math.round((element.size / 1028 / 1028) * 100) / 100,
@@ -54,6 +62,23 @@ export async function getArtifacts(
             '%2F'
           )}`,
           vulnerabilities: {
+            count: 0,
+            severity: "none",
+            critical: 0,
+            high: 0,
+            medium: 0,
+            low: 0,
+            none: 0,
+          },
+          id: projectId + generatedTag + element.push_time,
+        }
+
+        const reportMimeType = "application/vnd.security.vulnerability.report; version=1.1"
+
+        if (reportMimeType in element.scan_overview) {
+          const scanOverview = element.scan_overview[reportMimeType]
+          const { Critical, High, Medium, Low } = scanOverview.summary.summary
+          art.vulnerabilities = {
             count: scanOverview.summary.total,
             severity: scanOverview.severity,
             critical: Critical,
@@ -61,9 +86,10 @@ export async function getArtifacts(
             medium: Medium,
             low: Low,
             none: scanOverview.summary.total - Critical - High - Medium - Low,
-          },
-          id: projectId + generatedTag + element.push_time,
+          }
         }
+
+
         return art
       }
     )
