@@ -34,7 +34,7 @@ export async function getArtifacts(
         push_time: string
         project_id: number
         scan_overview: {
-          [mime: string]: {
+          [mime: ScanMimeType]: {
             severity: string,
             summary: {
               total: number,
