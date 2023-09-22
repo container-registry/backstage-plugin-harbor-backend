@@ -8,7 +8,7 @@ export async function getArtifacts(
   password: string,
   project: string,
   repository: string,
-  harborScanMimeType: string
+  harborScanMimeType: ScanMimeType
 ) {
   let repo = repository
   if (repository.includes('/')) {
@@ -133,15 +133,33 @@ export async function getArtifacts(
 
         if (harborScanMimeType in element.scan_overview) {
           const scanOverview = element.scan_overview[harborScanMimeType]
-          const { Critical, High, Medium, Low } = scanOverview.summary.summary
-          art.vulnerabilities = {
-            count: scanOverview.summary.total,
-            severity: scanOverview.severity,
-            critical: Critical,
-            high: High,
-            medium: Medium,
-            low: Low,
-            none: scanOverview.summary.total - Critical - High - Medium - Low,
+          
+          if (harborScanMimeType === "application/vnd.security.vulnerability.report; version=1.1") {
+            const { Critical, High, Medium, Low } = scanOverview.summary.summary
+
+            art.vulnerabilities = {
+              count: scanOverview.summary.total,
+              severity: scanOverview.severity,
+              critical: Critical,
+              high: High,
+              medium: Medium,
+              low: Low,
+              none: scanOverview.summary.total - Critical - High - Medium - Low,
+            }
+          } else {
+            // application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0
+
+            const Severities = {}
+
+            const [critical, high, medium, low] = ["Critical", "High", "Medium", "Low"].map(sev => (
+              scanOverview.vulnerabilities.filter(vuln => vuln.severity === sev)
+            ))
+            art.vulnerabilities = {
+              count: scanOverview.vulnerabilities.length,
+              severity: scanOverview.severity,
+              critical, high, medium, low,
+              none: scanOverview.vulnerabilities.length - critical - high - medium - low
+            }
           }
         }
 
@@ -200,3 +218,5 @@ export interface Vulnerability {
   links: string[]
   artifact_digest: string
 }
+
+export type ScanMimeType = 'application/vnd.scanner.adapter.vuln.report.harbor+json' | 'version=1.0 or application/vnd.security.vulnerability.report; version=1.1'
