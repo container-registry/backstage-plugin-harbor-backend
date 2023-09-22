@@ -38,6 +38,7 @@ export async function createRouter(
   const username = config.getString('harbor.username')
   const password = config.getString('harbor.password')
   const redisConfig = config.getOptionalConfig('redis')
+  const harborScanMimeType = config.getString('harbor.scanMimeType')
 
   const router = Router()
   router.use(express.json())
@@ -51,7 +52,8 @@ export async function createRouter(
       username,
       password,
       project,
-      decodeURIComponent(repository)
+      decodeURIComponent(repository),
+      harborScanMimeType
     )
 
     response.send(artifacts)

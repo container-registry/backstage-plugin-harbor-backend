@@ -7,7 +7,8 @@ export async function getArtifacts(
   username: string,
   password: string,
   project: string,
-  repository: string
+  repository: string,
+  harborScanMimeType: string
 ) {
   let repo = repository
   if (repository.includes('/')) {
@@ -130,10 +131,8 @@ export async function getArtifacts(
           id: projectId + generatedTag + element.push_time,
         }
 
-        const reportMimeType = "application/vnd.security.vulnerability.report; version=1.1"
-
-        if (reportMimeType in element.scan_overview) {
-          const scanOverview = element.scan_overview[reportMimeType]
+        if (harborScanMimeType in element.scan_overview) {
+          const scanOverview = element.scan_overview[harborScanMimeType]
           const { Critical, High, Medium, Low } = scanOverview.summary.summary
           art.vulnerabilities = {
             count: scanOverview.summary.total,
