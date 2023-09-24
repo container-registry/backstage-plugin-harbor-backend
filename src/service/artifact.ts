@@ -161,7 +161,6 @@ export type ScanOverviewItemsMap = {
   }
 }
 
-//export type ScanOverview = Record<ScanMimeType, ScanOverviewItemsMap[ScanMimeType]>
 export type ScanOverview = {
   [mime in ScanMimeType]: ScanOverviewItemsMap[mime]
 }
