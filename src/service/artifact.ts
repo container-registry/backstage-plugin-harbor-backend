@@ -1,5 +1,4 @@
 import { Base64 } from 'js-base64'
-import moment from 'moment'
 import fetch from 'node-fetch'
 
 export async function getArtifacts(
