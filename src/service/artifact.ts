@@ -117,8 +117,7 @@ interface HarborApiArtifact {
   scan_overview: ScanOverview
 }
 
-export type ScanMimeType = 'application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0'
-  | 'application/vnd.security.vulnerability.report; version=1.1'
+export type ScanMimeType = keyof ScanOverviewItemsMap
 
 export type ScanOverviewItemsMap = {
   'application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0': {
