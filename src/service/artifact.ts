@@ -23,72 +23,92 @@ export async function getArtifacts(
   }).then((res: { json: () => any }) => res.json())
 
   return await Promise.all(
-    response.map(
-      async (element) => {
+    response.map(async (element) => {
+      const projectId = element.project_id
 
-        const projectId = element.project_id
+      const generatedTag = element.tags?.length
+        ? element.tags[0].name
+        : 'undefined'
 
-        const generatedTag = element.tags?.length
-          ? element.tags[0].name
-          : 'undefined'
+      const art: Artifact = {
+        id: projectId + generatedTag + element.push_time,
+        projectID: projectId,
+        tag: generatedTag,
+        size: Math.round((element.size / 1028 / 1028) * 100) / 100,
+        repoUrl: `${baseUrl}/harbor/projects/${projectId}/repositories/${encodeURIComponent(
+          repository
+        )}`,
 
-        const art: Artifact = {
-          id: projectId + generatedTag + element.push_time,
-          projectID: projectId,
-          tag: generatedTag,
-          size: Math.round((element.size / 1028 / 1028) * 100) / 100,
-          repoUrl: `${baseUrl}/harbor/projects/${projectId}/repositories/${encodeURIComponent(repository)}`,
+        vulnerabilities: {
+          count: 0,
+          severity: 'none',
+          critical: 0,
+          high: 0,
+          medium: 0,
+          low: 0,
+          none: 0,
+        },
 
-          vulnerabilities: {
-            count: 0,
-            severity: "none",
-            critical: 0,
-            high: 0,
-            medium: 0,
-            low: 0,
-            none: 0,
-          },
+        // handle date formatting on client side in browser using native date apis (e.g. using toLocaleDateString)
+        pullTime: element.pull_time,
+        pushTime: element.push_time,
+      }
 
-          // handle date formatting on client side in browser using native date apis (e.g. using toLocaleDateString)
-          pullTime: element.pull_time,
-          pushTime: element.push_time,
-        }
+      if (Object.keys(element.scan_overview).length > 0) {
+        const mimeType = Object.keys(element.scan_overview)[0]
+        if (
+          mimeType ==
+          'application/vnd.security.vulnerability.report; version=1.1'
+        ) {
+          const scanOverview = element.scan_overview[mimeType]
+          const { Critical, High, Medium, Low } = scanOverview.summary.summary
 
-        if (Object.keys(element.scan_overview).length > 0) {
-          const mimeType = Object.keys(element.scan_overview)[0]
-          if (mimeType == "application/vnd.security.vulnerability.report; version=1.1") {
-            const scanOverview = element.scan_overview[mimeType]
-            const { Critical, High, Medium, Low } = scanOverview.summary.summary
+          art.vulnerabilities = {
+            count: scanOverview.summary.total,
+            severity: scanOverview.severity,
+            critical: Critical,
+            high: High,
+            medium: Medium,
+            low: Low,
+            none: scanOverview.summary.total - Critical - High - Medium - Low,
+          }
+        } else if (
+          mimeType ==
+          'application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0'
+        ) {
+          const scanOverview = element.scan_overview[mimeType]
+          const Severities = {}
 
-            art.vulnerabilities = {
-              count: scanOverview.summary.total,
-              severity: scanOverview.severity,
-              critical: Critical,
-              high: High,
-              medium: Medium,
-              low: Low,
-              none: scanOverview.summary.total - Critical - High - Medium - Low,
-            }
-          } else if (mimeType == "application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0") {
-            const scanOverview = element.scan_overview[mimeType]
-            const Severities = {}
-
-            const [critical, high, medium, low] = ["Critical", "High", "Medium", "Low"].map(sev => (
-              scanOverview.vulnerabilities.filter(vuln => vuln.severity === sev).length
-            ))
-            art.vulnerabilities = {
-              count: scanOverview.vulnerabilities.length,
-              severity: scanOverview.severity,
-              critical, high, medium, low,
-              none: scanOverview.vulnerabilities.length - critical - high - medium - low
-            }
+          const [critical, high, medium, low] = [
+            'Critical',
+            'High',
+            'Medium',
+            'Low',
+          ].map(
+            (sev) =>
+              scanOverview.vulnerabilities.filter(
+                (vuln) => vuln.severity === sev
+              ).length
+          )
+          art.vulnerabilities = {
+            count: scanOverview.vulnerabilities.length,
+            severity: scanOverview.severity,
+            critical,
+            high,
+            medium,
+            low,
+            none:
+              scanOverview.vulnerabilities.length -
+              critical -
+              high -
+              medium -
+              low,
           }
         }
-
-
-        return art
       }
-    )
+
+      return art
+    })
   )
 }
 
@@ -121,24 +141,24 @@ export type ScanMimeType = keyof ScanOverviewItemsMap
 
 export type ScanOverviewItemsMap = {
   'application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0': {
-    generated_at: string,
+    generated_at: string
     scanner: {
-      name: string,
-      vendor: string,
-      version: string,
-    },
-    severity: string,
+      name: string
+      vendor: string
+      version: string
+    }
+    severity: string
     vulnerabilities: Vulnerability[]
-  };
+  }
   'application/vnd.security.vulnerability.report; version=1.1': {
-    severity: string,
+    severity: string
     summary: {
-      total: number,
+      total: number
       summary: {
         [vulnSeverity: string]: number
       }
     }
-  };
+  }
 }
 
 //export type ScanOverview = Record<ScanMimeType, ScanOverviewItemsMap[ScanMimeType]>
