@@ -6,8 +6,7 @@ export async function getArtifacts(
   username: string,
   password: string,
   project: string,
-  repository: string,
-  harborScanMimeType: ScanMimeType
+  repository: string
 ) {
   let repo = repository
   if (repository.includes('/')) {
@@ -16,7 +15,7 @@ export async function getArtifacts(
 
   const url = `${baseUrl}/api/v2.0/projects/${project}/repositories/${repo}/artifacts?page=1&page_size=10&with_tag=true&with_label=false&with_scan_overview=true&with_signature=false&with_immutable_status=false`
 
-  const response = await fetch(url, {
+  const response: HarborApiArtifact[] = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Basic ${Base64.encode(`${username}:${password}`)}`,
@@ -25,25 +24,7 @@ export async function getArtifacts(
 
   return await Promise.all(
     response.map(
-      async (element: {
-        addition_links: { vulnerabilities: { href: string } }
-        size: number
-        tags: { name: string }[]
-        pull_time: string
-        push_time: string
-        project_id: number
-        scan_overview: {
-          [mime: ScanMimeType]: {
-            severity: string,
-            summary: {
-              total: number,
-              summary: {
-                [vulnSeverity: string]: number
-              }
-            }
-          }
-        }
-      }) => {
+      async (element) => {
 
         const projectId = element.project_id
 
@@ -51,73 +32,13 @@ export async function getArtifacts(
           ? element.tags[0].name
           : 'undefined'
 
-        if (element.addition_links.vulnerabilities !== undefined) {
-
-          const vulnUrl: string = `${baseUrl}${element.addition_links.vulnerabilities.href}`
-
-          const vulns: Root = await fetch(vulnUrl, {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Basic ${Base64.encode(`${username}:${password}`)}`,
-            },
-          }).then((res: { json: () => any }) => res.json())
-
-          const vulnKey =
-            'application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0'
-
-          if (vulns[vulnKey] === undefined) {
-            vulns[vulnKey] = {
-              generated_at: '',
-              scanner: {
-                name: 'undefined',
-                vendor: 'undefined',
-                version: 'undefined',
-              },
-              severity: 'Unknown',
-              vulnerabilities: [],
-            }
-          }
-
-          severity = vulns[vulnKey].severity
-          if (severity === 'Unknown') {
-            severity = 'None'
-          }
-
-          vulns[vulnKey].vulnerabilities.map((value) => {
-            switch (value.severity) {
-              case 'Low': {
-                low += 1
-                break
-              }
-              case 'Medium': {
-                medium += 1
-                break
-              }
-              case 'High': {
-                high += 1
-                break
-              }
-              case 'Critical': {
-                critical += 1
-                break
-              }
-              default:
-                none += 1
-            }
-          })
-
-          vulnerabilityCount = Object.keys(vulns[vulnKey].vulnerabilities).length;
-        }
         const art: Artifact = {
-          size: Math.round((element.size / 1028 / 1028) * 100) / 100,
-          tag: generatedTag,
-          pullTime: moment(element.pull_time).format('DD-MM-YYYY HH:MM'),
-          pushTime: moment(element.push_time).format('DD-MM-YYYY HH:MM'),
+          id: projectId + generatedTag + element.push_time,
           projectID: projectId,
-          repoUrl: `${baseUrl}/harbor/projects/${projectId}/repositories/${repository.replace(
-            /\//g,
-            '%2F'
-          )}`,
+          tag: generatedTag,
+          size: Math.round((element.size / 1028 / 1028) * 100) / 100,
+          repoUrl: `${baseUrl}/harbor/projects/${projectId}/repositories/${encodeURIComponent(repository)}`,
+
           vulnerabilities: {
             count: 0,
             severity: "none",
@@ -127,13 +48,16 @@ export async function getArtifacts(
             low: 0,
             none: 0,
           },
-          id: projectId + generatedTag + element.push_time,
+
+          // handle date formatting on client side in browser using native date apis (e.g. using toLocaleDateString)
+          pullTime: element.pull_time,
+          pushTime: element.push_time,
         }
 
-        if (harborScanMimeType in element.scan_overview) {
-          const scanOverview = element.scan_overview[harborScanMimeType]
-          
-          if (harborScanMimeType === "application/vnd.security.vulnerability.report; version=1.1") {
+        if (Object.keys(element.scan_overview).length > 0) {
+          const mimeType = Object.keys(element.scan_overview)[0]
+          if (mimeType == "application/vnd.security.vulnerability.report; version=1.1") {
+            const scanOverview = element.scan_overview[mimeType]
             const { Critical, High, Medium, Low } = scanOverview.summary.summary
 
             art.vulnerabilities = {
@@ -145,13 +69,12 @@ export async function getArtifacts(
               low: Low,
               none: scanOverview.summary.total - Critical - High - Medium - Low,
             }
-          } else {
-            // application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0
-
+          } else if (mimeType == "application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0") {
+            const scanOverview = element.scan_overview[mimeType]
             const Severities = {}
 
             const [critical, high, medium, low] = ["Critical", "High", "Medium", "Low"].map(sev => (
-              scanOverview.vulnerabilities.filter(vuln => vuln.severity === sev)
+              scanOverview.vulnerabilities.filter(vuln => vuln.severity === sev).length
             ))
             art.vulnerabilities = {
               count: scanOverview.vulnerabilities.length,
@@ -180,6 +103,50 @@ interface Artifact {
   id: string
 }
 
+interface HarborApiArtifact {
+  addition_links: {
+    vulnerabilities: {
+      href: string
+    }
+  }
+  size: number
+  tags: { name: string }[]
+  pull_time: string
+  push_time: string
+  project_id: number
+  scan_overview: ScanOverview
+}
+
+export type ScanMimeType = 'application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0'
+  | 'application/vnd.security.vulnerability.report; version=1.1'
+
+export type ScanOverviewItemsMap = {
+  'application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0': {
+    generated_at: string,
+    scanner: {
+      name: string,
+      vendor: string,
+      version: string,
+    },
+    severity: string,
+    vulnerabilities: Vulnerability[]
+  };
+  'application/vnd.security.vulnerability.report; version=1.1': {
+    severity: string,
+    summary: {
+      total: number,
+      summary: {
+        [vulnSeverity: string]: number
+      }
+    }
+  };
+}
+
+//export type ScanOverview = Record<ScanMimeType, ScanOverviewItemsMap[ScanMimeType]>
+export type ScanOverview = {
+  [mime in ScanMimeType]: ScanOverviewItemsMap[mime]
+}
+
 interface Vulnerabilities {
   count: number
   severity: string
@@ -188,23 +155,6 @@ interface Vulnerabilities {
   medium: number
   low: number
   none: number
-}
-
-export interface Root {
-  'application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0': ApplicationVndScannerAdapterVulnReportHarborJsonVersion10
-}
-
-export interface ApplicationVndScannerAdapterVulnReportHarborJsonVersion10 {
-  generated_at: string
-  scanner: Scanner
-  severity: string
-  vulnerabilities: Vulnerability[]
-}
-
-export interface Scanner {
-  name: string
-  vendor: string
-  version: string
 }
 
 export interface Vulnerability {
@@ -217,5 +167,3 @@ export interface Vulnerability {
   links: string[]
   artifact_digest: string
 }
-
-export type ScanMimeType = 'application/vnd.scanner.adapter.vuln.report.harbor+json' | 'version=1.0 or application/vnd.security.vulnerability.report; version=1.1'
