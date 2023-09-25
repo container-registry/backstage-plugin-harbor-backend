@@ -54,7 +54,7 @@ export async function getArtifacts(
         pushTime: element.push_time,
       }
 
-      if (Object.keys(element.scan_overview).length > 0) {
+      if ("scan_overview" in element && Object.keys(element.scan_overview).length > 0) {
         const mimeType = Object.keys(element.scan_overview)[0]
         if (
           mimeType ==
@@ -77,7 +77,6 @@ export async function getArtifacts(
           'application/vnd.scanner.adapter.vuln.report.harbor+json; version=1.0'
         ) {
           const scanOverview = element.scan_overview[mimeType]
-          const Severities = {}
 
           const [critical, high, medium, low] = [
             'Critical',
