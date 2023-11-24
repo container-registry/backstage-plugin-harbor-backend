@@ -22,6 +22,7 @@ import { Logger } from 'winston'
 import { getArtifacts } from './artifact'
 import { repoSearch } from './search'
 import { getTeamArtifacts } from './teamArtifacts'
+import { getHarborInstances } from './config'
 
 export interface RouterOptions {
   logger: Logger
@@ -34,22 +35,20 @@ export async function createRouter(
   const { logger, config } = options
 
   logger.info('Initializing harbor backend')
-  const baseUrl = config.getString('harbor.baseUrl')
-  const username = config.getString('harbor.username')
-  const password = config.getString('harbor.password')
+  const harborInstances = getHarborInstances(config)
   const redisConfig = config.getOptionalConfig('redis')
 
   const router = Router()
   router.use(express.json())
 
   router.get('/artifacts', async (request, response) => {
-    const project: any = request.query.project
-    const repository: any = request.query.repository
+    const host: string = request.query.host ?? ''
+    const project: string = request.query.project
+    const repository: string = request.query.repository
 
     const artifacts = await getArtifacts(
-      baseUrl,
-      username,
-      password,
+      harborInstances,
+      decodeURIComponent(host),
       project,
       decodeURIComponent(repository)
     )

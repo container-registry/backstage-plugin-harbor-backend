@@ -94,12 +94,21 @@ The plugin requires configuration in the Backstage app-config.yaml to connect to
 
 ```yaml
 harbor:
+  # This is the traditional way of configuring the Harbor plugin. 
   baseUrl: https://harbor.yourdomain.com
-  username: 
+  username:
     $env: HARBOR_USERNAME
   password:
     $env: HARBOR_PASSWORD
-
+  
+  # This is the way to go if you need to connect to multiple Harbor instances. You can also combine those approaches.
+  instances:
+    - host: harbor.yourdomain.com
+      baseUrl: https://harbor.yourdomain.com
+      username:
+        $env: HARBOR_USERNAME
+      password:
+        $env: HARBOR_PASSWORD
 ```
 
 Adding annotations and values to your component file.
@@ -111,7 +120,14 @@ metadata:
   name: sample-system
   description: "A sample system"
   annotations:
-    goharbor.io/repository-slug: project/repository
+    # This will use harbor.baseUrl
+    goharbor.io/repository-slug: project/repository 
+    # OR
+    # This will use harbor.instances[].baseUrl based on the matching host
+    goharbor.io/repository-slug: harbor.yourdomain.com/project/repository 
+    # OR
+    # This will fetch the first image from harbor.baseUrl and the second image from harbor.instances[].baseUrl
+    goharbor.io/repository-slug: project/repository, harbor.yourdomain.com/project/repository 
 ```
 
 ## Contributing
