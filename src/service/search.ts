@@ -2,15 +2,18 @@ import { Config } from '@backstage/config'
 import { Base64 } from 'js-base64'
 import fetch from 'node-fetch'
 import * as redis from 'redis'
+import { getCurrentHarborInstance, HarborInstance } from './config'
 
 export async function repoSearch(
-  baseUrl: string,
-  username: string,
-  password: string,
+  harborInstances: HarborInstance[],
+  host: string,
   body: string,
   team: string,
   redisConfig: Config | undefined
 ) {
+  const currentHarborInstance = getCurrentHarborInstance(harborInstances, host)
+  const baseUrl = currentHarborInstance.apiBaseUrl
+  const { username, password } = currentHarborInstance
   const repos: Repositories[] = JSON.parse(JSON.stringify(body))
   let client = redis.createClient({})
   if (redisConfig !== undefined) {

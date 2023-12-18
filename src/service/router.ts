@@ -42,9 +42,9 @@ export async function createRouter(
   router.use(express.json())
 
   router.get('/artifacts', async (request, response) => {
-    const host: string = request.query.host ?? ''
-    const project: string = request.query.project
-    const repository: string = request.query.repository
+    const host: string = request.query.host as string ?? ''
+    const project: string = request.query.project as string
+    const repository: string = request.query.repository as string
 
     const artifacts = await getArtifacts(
       harborInstances,
@@ -70,11 +70,11 @@ export async function createRouter(
   })
 
   router.post('/search', async (request, response) => {
+    const host: string = request.query.host as string ?? ''
     const team: any = request.query.team
     const search = await repoSearch(
-      baseUrl,
-      username,
-      password,
+      harborInstances,
+      host,
       request.body,
       team,
       redisConfig
