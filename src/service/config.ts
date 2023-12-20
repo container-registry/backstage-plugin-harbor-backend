@@ -1,4 +1,5 @@
 import { Config } from '@backstage/config'
+import { NotFoundError } from '@backstage/errors'
 
 export interface HarborInstance {
   host: string
@@ -31,4 +32,22 @@ export const getHarborInstances = (config: Config): HarborInstance[] => {
   }
 
   return instances
+}
+
+export const getCurrentHarborInstance = (harborInstances: HarborInstance[], host: string) : HarborInstance => {
+
+  const currentInstance = harborInstances.find((i) => i.host === host)
+  if (!currentInstance) {
+    if (host) {
+      throw new NotFoundError(
+        `No Harbor instance for host '${host}' found. Please configure it in your app configuration.`
+      )
+    } else {
+      throw new NotFoundError(
+        'No default Harbor configuration found. Please configure it in your app configuration.'
+      )
+    }
+  }
+
+  return currentInstance
 }
