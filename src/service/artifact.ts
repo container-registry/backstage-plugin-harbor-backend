@@ -46,13 +46,13 @@ export async function getArtifacts(
         )}`,
 
         vulnerabilities: {
-          count: 0,
-          severity: 'none',
-          critical: 0,
-          high: 0,
-          medium: 0,
-          low: 0,
-          none: 0,
+          count: -1,
+          severity: '',
+          critical: -1,
+          high: -1,
+          medium: -1,
+          low: -1,
+          none: -1,
         },
 
         // handle date formatting on client side in browser using native date apis (e.g. using toLocaleDateString)
@@ -60,23 +60,29 @@ export async function getArtifacts(
         pushTime: element.push_time,
       }
 
-      if ("scan_overview" in element && Object.keys(element.scan_overview).length > 0) {
+      if (
+        'scan_overview' in element &&
+        Object.keys(element.scan_overview).length > 0
+      ) {
         const mimeType = Object.keys(element.scan_overview)[0]
+
         if (
           mimeType ==
           'application/vnd.security.vulnerability.report; version=1.1'
         ) {
           const scanOverview = element.scan_overview[mimeType]
-          const { Critical, High, Medium, Low } = scanOverview.summary.summary
+          if (scanOverview.summary) {
+            const { Critical, High, Medium, Low } = scanOverview.summary.summary
 
-          art.vulnerabilities = {
-            count: scanOverview.summary.total,
-            severity: scanOverview.severity,
-            critical: Critical,
-            high: High,
-            medium: Medium,
-            low: Low,
-            none: scanOverview.summary.total - Critical - High - Medium - Low,
+            art.vulnerabilities = {
+              count: scanOverview.summary.total,
+              severity: scanOverview.severity,
+              critical: Critical,
+              high: High,
+              medium: Medium,
+              low: Low,
+              none: scanOverview.summary.total - Critical - High - Medium - Low,
+            }
           }
         } else if (
           mimeType ==
