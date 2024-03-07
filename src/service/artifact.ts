@@ -15,7 +15,7 @@ export async function getArtifacts(
 
   let repo = repository
   if (repository.includes('/')) {
-    repo = repository.replace('/', '%252F')
+    repo = repository.replaceAll('/', '%252F')
   }
 
   const url = `${baseUrl}/api/v2.0/projects/${project}/repositories/${repo}/artifacts?page=1&page_size=10&with_tag=true&with_label=false&with_scan_overview=true&with_signature=false&with_immutable_status=false`
