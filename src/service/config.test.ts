@@ -1,6 +1,6 @@
-import { ConfigReader } from '@backstage/config'
-import { NotFoundError } from '@backstage/errors'
-import { getCurrentHarborInstance, getHarborInstances, HarborInstance } from './config'
+import { ConfigReader } from '@backstage/config';
+import { NotFoundError } from '@backstage/errors';
+import { getCurrentHarborInstance, getHarborInstances, HarborInstance } from './config';
 
 describe('config', () => {
   describe('getHarborInstances', () => {

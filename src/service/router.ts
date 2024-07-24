@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { errorHandler } from '@backstage/backend-common'
-import { Config } from '@backstage/config'
-import express from 'express'
-import Router from 'express-promise-router'
-import { Logger } from 'winston'
-import { getArtifacts } from './artifact'
-import { repoSearch } from './search'
-import { getTeamArtifacts } from './teamArtifacts'
-import { getHarborInstances } from './config'
+import { errorHandler } from '@backstage/backend-common';
+import { Config } from '@backstage/config';
+import express from 'express';
+import Router from 'express-promise-router';
+import { Logger } from 'winston';
+import { getArtifacts } from './artifact';
+import { repoSearch } from './search';
+import { getTeamArtifacts } from './teamArtifacts';
+import { getHarborInstances } from './config';
 
 export interface RouterOptions {
   logger: Logger

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { getVoidLogger } from '@backstage/backend-common'
-import { ConfigReader } from '@backstage/config'
-import express from 'express'
-import request from 'supertest'
-import { createRouter } from './router'
+import { getVoidLogger } from '@backstage/backend-common';
+import { ConfigReader } from '@backstage/config';
+import express from 'express';
+import request from 'supertest';
+import { createRouter } from './router';
 
 describe('createRouter', () => {
   let app: express.Express

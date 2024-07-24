@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { createServiceBuilder } from '@backstage/backend-common'
-import { ConfigReader } from '@backstage/config'
-import { Server } from 'http'
-import { Logger } from 'winston'
-import { createRouter } from './router'
+import { createServiceBuilder } from '@backstage/backend-common';
+import { ConfigReader } from '@backstage/config';
+import { Server } from 'http';
+import { Logger } from 'winston';
+import { createRouter } from './router';
 
 export interface ServerOptions {
   port: number
