@@ -3,15 +3,24 @@
   "version": "${CIRCLE_TAG}",
   "main": "src/index.ts",
   "types": "src/index.ts",
+  "private": false,
   "license": "Apache-2.0",
-  "repository": "git://github.com/BESTSELLER/backstage-plugin-harbor-backend.git",
+  "repository": {
+    "type": "git",
+    "directory": "."
+  },
   "publishConfig": {
     "access": "public",
     "main": "dist/index.cjs.js",
     "types": "dist/index.d.ts"
   },
   "backstage": {
-    "role": "backend-plugin"
+    "role": "backend-plugin",
+    "pluginId": "harbor",
+    "pluginPackages": [
+      "@bestsellerit/backstage-plugin-harbor",
+      "@bestsellerit/backstage-plugin-harbor-backend"
+    ]
   },
   "configSchema": "config.d.ts",
   "scripts": {
@@ -24,8 +33,10 @@
     "postpack": "backstage-cli package postpack"
   },
   "dependencies": {
-    "@backstage/backend-common": "^0.15.0",
+    "@backstage/backend-common": "^0.23.3",
+    "@backstage/backend-plugin-api": "^0.7.0",
     "@backstage/config": "^1.0.0",
+    "@backstage/errors": "^1.2.4",
     "@types/express": "*",
     "express": "^4.18.1",
     "express-promise-router": "^4.1.0",
@@ -36,11 +47,11 @@
     "yn": "^4.0.0"
   },
   "devDependencies": {
-    "@backstage/cli": "^0.18.1",
+    "@backstage/cli": "0.21.0",
     "@types/jest": "^27.5.0",
     "@types/node-fetch": "^2.6.1",
     "@types/supertest": "^2.0.8",
-    "msw": "^0.35.0",
+    "msw": "1.3.3",
     "prettier": "^2.4.1",
     "supertest": "^6.1.6"
   },

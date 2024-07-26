@@ -1,5 +1,5 @@
-import { Config } from '@backstage/config'
-import { NotFoundError } from '@backstage/errors'
+import { Config } from '@backstage/config';
+import { NotFoundError } from '@backstage/errors';
 
 export interface HarborInstance {
   host: string

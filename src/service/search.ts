@@ -1,8 +1,8 @@
-import { Config } from '@backstage/config'
-import { Base64 } from 'js-base64'
-import fetch from 'node-fetch'
-import * as redis from 'redis'
-import { getCurrentHarborInstance, HarborInstance } from './config'
+import { Config } from '@backstage/config';
+import { Base64 } from 'js-base64';
+import fetch from 'node-fetch';
+import * as redis from 'redis';
+import { getCurrentHarborInstance, HarborInstance } from './config';
 
 export async function repoSearch(
   harborInstances: HarborInstance[],

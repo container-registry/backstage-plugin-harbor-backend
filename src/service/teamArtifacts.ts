@@ -1,7 +1,7 @@
-import { getRootLogger } from '@backstage/backend-common'
-import { Config } from '@backstage/config'
-import fetch from 'node-fetch'
-import * as redis from 'redis'
+import { getRootLogger } from '@backstage/backend-common';
+import { Config } from '@backstage/config';
+import fetch from 'node-fetch';
+import * as redis from 'redis';
 
 const logger = getRootLogger()
 
